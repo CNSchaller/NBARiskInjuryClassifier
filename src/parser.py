@@ -51,16 +51,17 @@ def reformatDates(df): #fix data types
     print("Reformatted ", refomat_count, " entries.")
     return
 
-def combineColumns(df): #combine acquired and relinquished columns into one
-    df['Transaction'] = np.where(
+def combineColumns(df): #combine columns to make easier to work with
+    df['Transaction'] = np.where( #this makes acquired and reinquished columns into one 'Transaction' column
         df['Acquired'].notna(), 'Acquired',
         np.where(df['Relinquished'].notna(), 'Relinquished', pd.NA))
     
-    df['Player'] = np.where(
+    df['Player'] = np.where( #this puts all the names into the 'Player' column
         df['Acquired'].notna(), df['Acquired'],
         np.where(df['Relinquished'].notna(), df['Relinquished'], pd.NA))
     
-    df['Player'] = df['Player'].str.split(' / ')
+    #theres entries where multiple names are in one entry, this splits them up
+    df['Player'] = df['Player'].str.split(' / ') 
     df[:] = df.explode('Player', ignore_index=True)
 
     print("Combined 2 columns.")
@@ -102,6 +103,9 @@ def countEmptyTransaction(df):
     bad_count = len(bad_entry)
     return bad_count
 
+
+#still need to remove unbalanced entries (where someone was activated but never put on IL and vice versa)
+#no need to classify on injurie types
 df1 = loadFile()
 #printBadEntries(df1)
 cleanData(df1)
