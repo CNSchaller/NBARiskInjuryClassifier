@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 ###Loading data into dataframes
 
@@ -15,6 +16,8 @@ def cleanData(df):
     dropDuplicateEntries(df)
 
     reformatDates(df)
+    combineColumns(df)
+    dropAcquiredRelinquished(df)
 
     return
 
@@ -48,6 +51,27 @@ def reformatDates(df): #fix data types
     print("Reformatted ", refomat_count, " entries.")
     return
 
+def combineColumns(df): #combine acquired and relinquished columns into one
+    df['Transaction'] = np.where(
+        df['Acquired'].notna(), 'Acquired',
+        np.where(df['Relinquished'].notna(), 'Relinquished', pd.NA))
+    
+    df['Player'] = np.where(
+        df['Acquired'].notna(), df['Acquired'],
+        np.where(df['Relinquished'].notna(), df['Relinquished'], pd.NA))
+    
+    df['Player'] = df['Player'].str.split(' / ')
+    df[:] = df.explode('Player', ignore_index=True)
+
+    print("Combined 2 columns.")
+    return
+
+def dropAcquiredRelinquished(df):
+    df.drop('Acquired', axis=1, inplace=True)
+    df.drop('Relinquished', axis=1, inplace=True)
+
+    print("Dropped 2 columns.")
+
 ###Debugging functions
 
 def countDoubleEntries(df): #returns amount of entries that have a value in both the 'Acquired' and 'Relinquished' columns
@@ -71,11 +95,17 @@ def printBadEntries(df):
     print("Amount of double entries: ", countDoubleEntries(df))
     print("Amount of empty entries: ", countEmptyEntries(df))
     print("Amount of duplicate entries: ", countDuplicateEntries(df))
+    print("amount of empty values in Transaction: ", countEmptyTransaction(df))
 
+def countEmptyTransaction(df):
+    bad_entry = df[df['Transaction'].isnull()]
+    bad_count = len(bad_entry)
+    return bad_count
 
 df1 = loadFile()
-printBadEntries(df1)
+#printBadEntries(df1)
 cleanData(df1)
-printBadEntries(df1)
 
-
+#combineColumns(df1)
+#printBadEntries(df1)
+print(df1.head(30))
