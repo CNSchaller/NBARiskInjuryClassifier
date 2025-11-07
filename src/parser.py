@@ -21,6 +21,7 @@ def cleanData(df):
     dropUnbalancedConsecutiveEntries(df1)
     combineEntries(df)
     dropUnbalancedEntries(df)
+    addDaysOut(df)
 
     return
 
@@ -83,22 +84,43 @@ def dropAcquiredRelinquished(df): #drop useless columns
     print("Dropped 2 columns.")
 
 def dropUnbalancedConsecutiveEntries(df):
-    """Drop consecutive duplicate transactions for the same player"""
     # Sort by player and date
+    
+    print(df.head())
     df.sort_values(['Player', 'Date'], inplace=True)
     df.reset_index(drop=True, inplace=True)
     
-    # Identify consecutive duplicates within each player
-    mask = df['Transaction'] != df.groupby('Player')['Transaction'].shift()
+    rows_to_drop = []
     
-    # Keep only rows that are NOT consecutive duplicates
-    rows_to_drop = df[~mask].index
+    # group by player and check for repeated activations/relinquishments
+    for player, group in df.groupby('Player', sort=False):
+        indices = group.index.tolist()
+        transactions = group['Transaction'].tolist()
+        
+        # drop first entry if its an activation (messes with data down the line)
+        if len(transactions) > 0 and transactions[0] == 'Acquired':
+            rows_to_drop.append(indices[0])
+        
+        for i in range(len(transactions) - 1):
+            current_txn = transactions[i]
+            next_txn = transactions[i + 1]
+            
+            # two activations in a row, drop the second one
+            if current_txn == 'Acquired' and next_txn == 'Acquired':
+                rows_to_drop.append(indices[i + 1])
+            
+            # two relinquishes in a row, drop the first one
+            elif current_txn == 'Relinquished' and next_txn == 'Relinquished':
+                rows_to_drop.append(indices[i])
+    
+    # remove duplicates
+    rows_to_drop = list(set(rows_to_drop))
+    
     df.drop(rows_to_drop, inplace=True)
     df.reset_index(drop=True, inplace=True)
     
-    print(f"Dropped {len(rows_to_drop)} consecutive duplicate transactions.")
+    print(f"Dropped ", len(rows_to_drop), " unbalanced consecutive transactions.")
     return
-
 
 def combineEntries(df): #combine entries for easier access, make dates activated/injured into same entry
     relinquished = df[df['Transaction'] == 'Relinquished'][['Player', 'Date']]
@@ -157,16 +179,13 @@ def countEmptyTransaction(df):
     bad_count = len(bad_entry)
     return bad_count
 
+def countNegativeDays(df):
+    neg_entries = df[(df['Days Out'] < pd.Timedelta(0))]
+    print(neg_entries.head())
+    return len(neg_entries)
 
-#still need to remove unbalanced entries (where someone was activated but never put on IL and vice versa)
-#no need to classify on injurie types
 df1 = loadFile()
 cleanData(df1)
-#dropUnbalancedConsecutiveEntries(df1)
-addDaysOut(df1)
 
-
-
-#combineColumns(df1)
-#printBadEntries(df1)
-print(df1.tail(30))
+#df1.info()
+print(df1.tail(60))
