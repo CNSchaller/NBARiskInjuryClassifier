@@ -86,7 +86,7 @@ def dropAcquiredRelinquished(df): #drop useless columns
 def dropUnbalancedConsecutiveEntries(df):
     # Sort by player and date
     
-    print(df.head())
+    #print(df.head())
     df.sort_values(['Player', 'Date'], inplace=True)
     df.reset_index(drop=True, inplace=True)
     
@@ -145,7 +145,7 @@ def dropUnbalancedEntries(df): #drop entries that only have an activation or inj
     df.drop(df[unbalanced].index, inplace=True)
     return
 
-def addDaysOut(df):
+def addDaysOut(df): #add a days out column
     df['Days Out'] = df['Date Activated'] - df['Date Relinquished']
 
 
