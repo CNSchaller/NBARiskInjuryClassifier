@@ -33,6 +33,7 @@ NBARiskInjuryClassifier/
 │
 ├── src/
 │   ├── parser.py                 # Cleans and merges raw datasets
+|   ├── get_player_stats.py       # Pulls player stats from NBA API
 │   ├── features.py               # Feature engineering and transformations
 │   ├── train_model.py            # Model training and evaluation
 │
