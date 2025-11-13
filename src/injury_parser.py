@@ -188,4 +188,4 @@ cleanData(df1)
 df1.to_csv("./data/injury_stats_clean.csv", index=False)
 
 #df1.info()
-print(df1.tail(60))
+#print(df1.tail(60))

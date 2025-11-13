@@ -54,5 +54,8 @@ NBARiskInjuryClassifier/
 ### Key Insights
 
 ### How to Run
+To access the nba api, the pandas, requests, and numpy packages are recquired. Run
+```pip install nba_api```
+before using the model.
 
 ### References
