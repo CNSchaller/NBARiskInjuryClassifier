@@ -2,16 +2,47 @@ import pandas as pd
 import numpy as np
 from nba_api.stats.endpoints import playercareerstats
 from nba_api.stats.endpoints import commonplayerinfo
+from nba_api.stats.static import players
 
 def loadCleanedFile():
     df = pd.read_csv('data/injury_stats_clean.csv')
     return df
 
-df_working = loadCleanedFile()
+def getPlayerID(name): #returns the players ID from the NBA api. some players have the same name, so need to add logic to handle that
+    matching_players = players.find_players_by_full_name(name)
+    return matching_players
+    return matching_players[0]['id']
 
+def getPlayersCareerStats(id):
+    career = playercareerstats.PlayerCareerStats(player_id=id)
+    dataframe = career.season_totals_regular_season.get_data_frame()
+    return dataframe
+
+def getPlayersCommonInfo(id):
+    other_stats = commonplayerinfo.CommonPlayerInfo(player_id=id)
+    dataframe = other_stats.common_player_info.get_data_frame()
+    return dataframe
+
+
+
+df_working = loadCleanedFile()
+TatumsID = getPlayerID('Jabari Smith')
+#TatumsCareer = getPlayersCareerStats(TatumsID)
+#TatumsInfo = getPlayersCommonInfo(TatumsID)
+print(TatumsID)
+
+#EXAMPLE USAGES
+
+#-----------HOW TO GET A PLAYERS PLAYERID----------
+#player_name = "Michael Jordan"
+
+#matching_players = players.find_players_by_full_name(player_name)
+#print(matching_players[0]['id'])
+
+#----------HOW TO GET PLAYERS CUMULATIVE CAREER STATS---------
 # Nikola Jokić
-career = playercareerstats.PlayerCareerStats(player_id='203999')
-df_1 = career.season_totals_regular_season.get_data_frame()
+#career = playercareerstats.PlayerCareerStats(player_id='203999')
+#df_1 = career.season_totals_regular_season.get_data_frame()
 #print(df_1.head(10))
 #print(df_1.columns.tolist())
 
@@ -23,9 +54,12 @@ df_1 = career.season_totals_regular_season.get_data_frame()
 #GS - games started
 #GP - games played
 #MIN - minutes
+#PLAYER_AGE - players age at start of that season
 
-other_stats = commonplayerinfo.CommonPlayerInfo(player_id='203999')
-os_df = other_stats.common_player_info.get_data_frame()
+
+#----------HOW TO GET PLAYERS COMMON INFORMATION----------
+#other_stats = commonplayerinfo.CommonPlayerInfo(player_id='203999')
+#os_df = other_stats.common_player_info.get_data_frame()
 #print(os_df.columns.tolist())
 
 #Columns returned:
@@ -36,7 +70,6 @@ os_df = other_stats.common_player_info.get_data_frame()
 # 'GREATEST_75_FLAG']
 
 # Wanted columns:
-# AGE
 # HEIGHT
 # WEIGHT
 # POSITION
