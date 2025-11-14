@@ -29,13 +29,17 @@ NBARiskInjuryClassifier/
 │
 ├── data/
 │   ├── InjuryStats.csv           # Raw injury dataset from Kaggle
-│   └── player_stats.csv          # Player stats from NBA API
+|   ├── injury_stats_clean.csv    # Cleaned injury dataset
+|   ├── player_stats_clean.csv    # Player stats from NBA API
+|   ├── merged_data.csv           # Merged injury and player data
+│   └── features_data.csv         # Feature engineered dataset
 │
 ├── src/
-│   ├── parser.py                 # Cleans and merges raw datasets
-|   ├── get_player_stats.py       # Pulls player stats from NBA API
+│   ├── injury_parser.py          # Reads and cleans raw InjuryStats.csv
+|   ├── player_stats_parser.py    # Reads and cleans player data from NBA API
+|   ├── merge_datasets.py         # Merges injury and player data
 │   ├── features.py               # Feature engineering and transformations
-│   ├── train_model.py            # Model training and evaluation
+│   └── train_model.py            # Model training and evaluation
 │
 ├── notebooks/
 │   ├── 01_EDA.ipynb              # Exploratory data analysis
@@ -50,5 +54,8 @@ NBARiskInjuryClassifier/
 ### Key Insights
 
 ### How to Run
+To access the nba api, the pandas, requests, and numpy packages are recquired. Run
+```pip install nba_api```
+before using the model.
 
 ### References

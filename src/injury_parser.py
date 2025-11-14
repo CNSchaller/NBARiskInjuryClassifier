@@ -83,9 +83,7 @@ def dropAcquiredRelinquished(df): #drop useless columns
 
     print("Dropped 2 columns.")
 
-def dropUnbalancedConsecutiveEntries(df):
-    # Sort by player and date
-    
+def dropUnbalancedConsecutiveEntries(df): #drop entries that start with an activation, or have 2 activations or 2 relinquishes in a row
     #print(df.head())
     df.sort_values(['Player', 'Date'], inplace=True)
     df.reset_index(drop=True, inplace=True)
@@ -167,29 +165,25 @@ def countEmptyEntries(df): #returns amount of entries where there is no name in 
 def countDuplicateEntries(df): #returns the amount of duplicate entries
     return df.duplicated().sum()
 
-def printBadEntries(df):
+def printBadEntries(df): #print statistics on amount of entries needing to be cleaned
     print("\n")
     print("Amount of double entries: ", countDoubleEntries(df))
     print("Amount of empty entries: ", countEmptyEntries(df))
     print("Amount of duplicate entries: ", countDuplicateEntries(df))
     print("amount of empty values in Transaction: ", countEmptyTransaction(df))
 
-def countEmptyTransaction(df):
+def countEmptyTransaction(df): #return amount of entries where there is nothing in 'Transaction'
     bad_entry = df[df['Transaction'].isnull()]
     bad_count = len(bad_entry)
     return bad_count
 
-def countNegativeDays(df):
+def countNegativeDays(df): #return amount of entries with negative days on IL
     neg_entries = df[(df['Days Out'] < pd.Timedelta(0))]
     print(neg_entries.head())
     return len(neg_entries)
 
 
-if __name__ == "__main__":
-    df1 = loadFile()
-    cleanData(df1)
+df1.to_csv("./data/injury_stats_clean.csv", index=False)
 
-    df1.to_csv('data/injury_stats_clean.csv', index=False)
-    print("Cleaned data exported")
-
-    print(df1.tail(10))
+#df1.info()
+#print(df1.tail(60))

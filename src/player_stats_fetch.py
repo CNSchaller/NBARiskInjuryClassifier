@@ -6,7 +6,7 @@ import os
 
 def main():
     injury_file_name = "data/injury_stats_clean.csv"
-    output_file_name = "data/player_stats_clean.csv"
+    output_file_name = "data/player_stats.csv"
 
     player_names = get_unique_players(injury_file_name)
 
