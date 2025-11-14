@@ -30,13 +30,15 @@ NBARiskInjuryClassifier/
 ├── data/
 │   ├── InjuryStats.csv           # Raw injury dataset from Kaggle
 |   ├── injury_stats_clean.csv    # Cleaned injury dataset
-|   ├── player_stats_clean.csv    # Player stats from NBA API
+|   ├── player_stats.csv          # Raw player stats from NBA API
+|   ├── player_stats_clean.csv    # Clean player stats from NBA API
 |   ├── merged_data.csv           # Merged injury and player data
 │   └── features_data.csv         # Feature engineered dataset
 │
 ├── src/
 │   ├── injury_parser.py          # Reads and cleans raw InjuryStats.csv
-|   ├── player_stats_parser.py    # Reads and cleans player data from NBA API
+|   ├── player_stats_fetch.py     # Reads and downloads player data from NBA API
+|   ├── player_stats_parser.py    # cleans player data from NBA API
 |   ├── merge_datasets.py         # Merges injury and player data
 │   ├── features.py               # Feature engineering and transformations
 │   └── train_model.py            # Model training and evaluation
