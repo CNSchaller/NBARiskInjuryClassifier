@@ -17,7 +17,7 @@ def main():
         player_names = player_names[start_index:]
         print(f"Resuming from {resume_from} (index {start_index})...")
     else:
-        print(f"Player {resume_from} not found — starting from beginning.")
+        print(f"Player {resume_from} not found, starting from beginning.")
 
     all_players = []
 
@@ -35,13 +35,11 @@ def main():
         if i % 50 == 0:
             print(f"Processed {i}/{len(player_names)} players so far...")
 
-        if i % 50 == 0:
+        if i % 100 == 0:
             save_progress(all_players, output_file_name)
-            print("💾 Progress saved ({0} players).".format(i))
-            time.sleep(500) 
+            time.sleep(600) #sleep for 10 minutes to avoid rate limits after 50 names processed
 
-        time.sleep(5.0)
-
+        time.sleep(5.0) #sleep 5 seconds after each name to avoid rate limtis
  
     combined = pd.concat(all_players, ignore_index=True)
     combined.to_csv(output_file_name, index=False)
@@ -78,7 +76,7 @@ def fetch_player_stats(player_name):
 
         career_df['PLAYER_NAME'] = player_name
 
-    
+
         info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
         info_df = info.get_data_frames()[0][
             ['PERSON_ID', 'DISPLAY_FIRST_LAST', 'TEAM_NAME', 'HEIGHT', 'WEIGHT', 'BIRTHDATE']
@@ -94,12 +92,8 @@ def fetch_player_stats(player_name):
 
 
 def save_progress(all_players, output_file_name):
-    """Save progress safely to CSV."""
-    try:
-        combined = pd.concat(all_players, ignore_index=True)
-        combined.to_csv(output_file_name, index=False)
-    except Exception as e:
-        print(f"Error saving progress: {e}")
+    combined = pd.concat(all_players, ignore_index=True)
+    combined.to_csv(output_file_name, index=False)
 
 
 if __name__ == "__main__":
