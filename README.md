@@ -60,4 +60,13 @@ To access the nba api, the pandas, requests, and numpy packages are recquired. R
 ```pip install nba_api```
 before using the model.
 
+### TO DO BEFORE MONDAY
+- Clean player data (charlotte)
+- Merge datasets (charlotte)
+- Feature engineering (calvin)
+- EDA (charlotte)
+- Fit the model (and tweak if necessary) (calvin)
+- Write report /poster
+
+
 ### References
