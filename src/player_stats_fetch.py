@@ -11,20 +11,27 @@ def main():
     player_names = get_unique_players(injury_file_name)
 
     
-    resume_from = "Ronald Dupree"  # Change this to where csv left off
+    resume_from = "Tommy Smith"  # Change this to where csv left off
     if resume_from in player_names:
         start_index = player_names.index(resume_from) + 1
         player_names = player_names[start_index:]
         print(f"Resuming from {resume_from} (index {start_index})...")
     else:
+        start_index = 0
+        player_names = player_names[start_index:]
         print(f"Player {resume_from} not found, starting from beginning.")
 
     all_players = []
 
 
-    existing_df = pd.read_csv(output_file_name)
-    all_players.append(existing_df)
-    print(f"Loaded {len(existing_df)} existing rows from previous run.")
+    if os.path.exists(output_file_name) and os.path.getsize(output_file_name) > 0:
+        existing_df = pd.read_csv(output_file_name)
+        print(f"Loaded {len(existing_df)} existing rows from previous run.")
+    else:
+        print("player_stats.csv missing or empty — starting from beginning.")
+        existing_df = pd.DataFrame()  # empty DF
+
+    all_players = [existing_df]    
      
 
     for i, name in enumerate(player_names, 1):
@@ -35,11 +42,10 @@ def main():
         if i % 50 == 0:
             print(f"Processed {i}/{len(player_names)} players so far...")
 
-        if i % 100 == 0:
+        if i % 50 == 0:
             save_progress(all_players, output_file_name)
-            time.sleep(600) #sleep for 10 minutes to avoid rate limits after 50 names processed
 
-        time.sleep(5.0) #sleep 5 seconds after each name to avoid rate limtis
+        time.sleep(1.0)
  
     combined = pd.concat(all_players, ignore_index=True)
     combined.to_csv(output_file_name, index=False)
@@ -69,7 +75,7 @@ def fetch_player_stats(player_name):
                 career_df = career.get_data_frames()[0]
                 break
             except Exception as e:
-                time.sleep(60 * (attempt + 1))
+                time.sleep(1 * (attempt + 1))
         else:
             print(f"Failed to fetch stats for {player_name} after retries.")
             return None
@@ -79,7 +85,7 @@ def fetch_player_stats(player_name):
 
         info = commonplayerinfo.CommonPlayerInfo(player_id=player_id)
         info_df = info.get_data_frames()[0][
-            ['PERSON_ID', 'DISPLAY_FIRST_LAST', 'TEAM_NAME', 'HEIGHT', 'WEIGHT', 'BIRTHDATE']
+            ['PERSON_ID', 'DISPLAY_FIRST_LAST', 'TEAM_NAME', 'HEIGHT', 'WEIGHT', 'BIRTHDATE','POSITION']
         ]
         info_df.rename(columns={'DISPLAY_FIRST_LAST': 'PLAYER_NAME'}, inplace=True)
 
