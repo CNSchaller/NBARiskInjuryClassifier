@@ -23,7 +23,7 @@ def clean_dataset(df):
 
     #print(df.head())
 
-    #Remove duplicate rows
+    #Check for duplicates and remove
     df = df.drop_duplicates()
     duplicate_count = df.duplicated().sum()
     print("Total duplicate rows:", duplicate_count)
