@@ -49,7 +49,7 @@ def main():
 
 
     #Check for strange outliers in numeric columns
-    #Days_out has an max value of 3295 lets check it out
+    #Days_out has a max value of 3295 lets check it out
     weird = merged_data[merged_data["DAYS_OUT"] > 365]
     print(weird)
     #lets remove these outliers for now
@@ -57,6 +57,22 @@ def main():
     print(merged_data.describe())
 
 
+    # Create NEXT-SEASON Y (DAYS_OUT_NEXT)
+    merged_data = merged_data.sort_values(by=["PLAYER_NAME", "SEASON"])
+
+    merged_data["DAYS_OUT_NEXT"] = (
+        merged_data.groupby("PLAYER_NAME")["DAYS_OUT"].shift(-1)
+    )
+
+    # Remove seasons where we don't have next season's injury data
+    merged_data = merged_data.dropna(subset=["DAYS_OUT_NEXT"])
+
+    # Drop current-season DAYS_OUT to prevent leakage
+    merged_data = merged_data.drop(columns=["DAYS_OUT"])
+
+    # Save cleaned + target-engineered dataset
+    merged_data.to_csv("data/merged_data.csv", index=False)
+    print(merged_data.head())
 
 
 
