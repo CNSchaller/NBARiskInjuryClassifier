@@ -6,7 +6,7 @@
 
 
 ### Overview
-This project aims to predict how long an NBA player will be out due to injury in their nexr season, measured in days missed ("Days Out").
+This project aims to predict how long an NBA player will be out due to injury in their next season, measured in days missed ("Days Out").
 Injuries have major impacts on player performance, team success, and season outcomes.
 By building a data-driven regression model, we estimate recovery duration based on player workload, demographics, injury type, and history.
 Our results can provide insights for teams, trainers, and analysts seeking to understand factors influencing recovery time.
